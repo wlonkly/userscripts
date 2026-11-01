@@ -6,6 +6,8 @@ Score 0 is left as RedFlagDeals renders it.
 
 ## Install
 
+[Install from Greasy Fork](https://greasyfork.org/en/scripts/603206-redflagdeals-vote-score-colours), or manually:
+
 1. Install [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/).
 2. Open the manager's dashboard, choose **Create a new script**, delete the template, and paste in `rfd-vote-colours.user.js`.
 3. Save, then reload a forum listing.
