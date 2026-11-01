@@ -4,7 +4,7 @@
 // @match       *://*.reddit.com/r/*
 // @grant       GM.xmlHttpRequest
 // @connect     reddit.com
-// @version     0.5.3
+// @version     0.5.4
 // @license     MIT
 // @author      https://github.com/wlonkly/
 // @description Restores the subscriber count on Reddit subreddits.

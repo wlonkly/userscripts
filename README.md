@@ -5,7 +5,7 @@ Small browser scripts for making websites behave the way I want.
 | Script | Install | What it does |
 |---|---|---|
 | [RedFlagDeals Vote Score Colours](rfd-vote-colours/) | [Greasy Fork](https://greasyfork.org/en/scripts/603206-redflagdeals-vote-score-colours) | Tints vote scores on RedFlagDeals forum listings: green for positive, red for negative, darker as the score grows. |
-| [Restore Reddit subscriber count](restore-reddit-subscriber-count/) | — | Puts the subscriber count back on Reddit subreddit pages. |
+| [Restore Reddit subscriber count](restore-reddit-subscriber-count/) | [Greasy Fork](https://greasyfork.org/en/scripts/550811-restore-reddit-subscriber-count) | Puts the subscriber count back on Reddit subreddit pages. |
 
 ## Layout
 
