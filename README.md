@@ -2,9 +2,9 @@
 
 Small browser scripts for making websites behave the way I want.
 
-| Script | What it does |
-|---|---|
-| [RFD Vote Score Colours](rfd-vote-colours/) | Tints vote scores on RedFlagDeals forum listings: green for positive, red for negative, darker as the score grows. |
+| Script | Install | What it does |
+|---|---|---|
+| [RFD Vote Score Colours](rfd-vote-colours/) | [Greasy Fork](https://greasyfork.org/en/scripts/603206-redflagdeals-vote-score-colours) | Tints vote scores on RedFlagDeals forum listings: green for positive, red for negative, darker as the score grows. |
 
 ## Layout
 
