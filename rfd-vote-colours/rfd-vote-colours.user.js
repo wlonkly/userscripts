@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name        RFD Vote Score Colours
+// @name        RedFlagDeals Vote Score Colours
 // @namespace   Violentmonkey Scripts
 // @match       https://forums.redflagdeals.com/*
 // @grant       none
-// @version     1.0.0
+// @version     1.0.1
 // @license     MIT
 // @author      https://github.com/wlonkly/
 // @description Tints post vote scores on RedFlagDeals forum listings. Green for positive, red for negative, darker as the score grows.
