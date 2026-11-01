@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://forums.redflagdeals.com/*
 // @grant       none
-// @version     1.0.1
+// @version     1.0.2
 // @license     MIT
 // @author      https://github.com/wlonkly/
 // @description Tints post vote scores on RedFlagDeals forum listings. Green for positive, red for negative, darker as the score grows.
@@ -117,7 +117,9 @@
   // The wide layout already renders the score as a chip. The narrow layout
   // renders it as bare text, so give it the same shape.
   const style = document.createElement('style');
-  style.textContent = '.rfd-vote-chip{display:inline-block;padding:0 5px}';
+  style.textContent =
+    CHIP_SELECTOR + '{border-radius:5px}' +
+    '.rfd-vote-chip{display:inline-block;padding:0 5px;border-radius:5px}';
   document.head.appendChild(style);
 
   function paintChip(chip) {
