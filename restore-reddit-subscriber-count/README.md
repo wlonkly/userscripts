@@ -4,7 +4,7 @@ Reddit no longer shows the subscriber count on subreddit pages. This script read
 
 ## Install
 
-Not published yet. To install manually:
+[Install from Greasy Fork](https://greasyfork.org/en/scripts/550811-restore-reddit-subscriber-count), or manually:
 
 1. Install [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/).
 2. Open the manager's dashboard, choose **Create a new script**, delete the template, and paste in `restore-reddit-subscriber-count.user.js`.
