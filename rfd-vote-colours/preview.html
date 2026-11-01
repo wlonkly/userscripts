@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFD vote score colours — preview</title>
+<style>
+  :root {
+    --page-bg: #ffffff;
+    --page-fg: #1a1a1a;
+    --muted: #6b6b6b;
+    --rule: #dcdcdc;
+    --card: #f7f7f7;
+  }
+  body.dark {
+    --page-bg: #14161a;
+    --page-fg: #e8e8e8;
+    --muted: #9aa0a6;
+    --rule: #2c3036;
+    --card: #1c1f24;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 32px 24px 64px;
+    background: var(--page-bg);
+    color: var(--page-fg);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  main { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 6px; }
+  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 40px 0 12px; }
+  p { margin: 0 0 12px; color: var(--muted); max-width: 68ch; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+  .toggle { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .chip {
+    display: inline-block;
+    padding: 1px 6px;
+    font: 600 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+    min-width: 44px;
+    text-align: center;
+  }
+  .bar-wrap { position: relative; margin: 8px 0 26px; }
+  .bar { height: 34px; border: 1px solid var(--rule); }
+  .ticks { position: relative; height: 20px; font-size: 11px; color: var(--muted); }
+  .ticks span { position: absolute; transform: translateX(-50%); top: 4px; white-space: nowrap; }
+  .mock {
+    border: 1px solid var(--rule);
+    background: var(--card);
+    padding: 14px 16px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .mock + .mock { margin-top: 10px; }
+  .mock-title { font-weight: 600; flex: 1 1 auto; }
+  .mock-meta { display: flex; gap: 10px; align-items: center; color: var(--muted); font-size: 12px; }
+  .mock-meta .chip { min-width: 0; }
+  table { border-collapse: collapse; font-size: 13px; width: 100%; }
+  th, td { text-align: left; padding: 5px 10px 5px 0; border-bottom: 1px solid var(--rule); }
+  th { color: var(--muted); font-weight: 600; }
+  td.num { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-variant-numeric: tabular-nums; }
+  .swatch { display: inline-block; width: 46px; height: 16px; vertical-align: middle; border: 1px solid var(--rule); }
+</style>
+</head>
+<body>
+<main>
+  <h1>RFD vote score colours</h1>
+  <p>This page runs the same palette code as <code>rfd-vote-colours.user.js</code>. A test fails if the two copies drift apart. Scores are the real ones from the Hot Deals listing you saved.</p>
+  <label class="toggle"><input type="checkbox" id="dark"> Dark page background (to check the chips still read)</label>
+
+  <h2>Scores from your sample page</h2>
+  <div class="chips" id="sample"></div>
+
+  <h2>Full ramp</h2>
+  <div class="bar-wrap">
+    <div class="bar" id="bar-positive"></div>
+    <div class="ticks" id="ticks-positive"></div>
+  </div>
+  <div class="bar-wrap">
+    <div class="bar" id="bar-negative"></div>
+    <div class="ticks" id="ticks-negative"></div>
+  </div>
+
+  <h2>In a listing row</h2>
+  <div class="mock">
+    <div class="mock-title">Milwaukee M18 6 tool kit</div>
+    <div class="mock-meta"><span class="chip" data-score="105">+105</span> minuterice · 7:23 pm</div>
+  </div>
+  <div class="mock">
+    <div class="mock-title">Amazon.ca: TP-Link Archer BE550</div>
+    <div class="mock-meta"><span class="chip" data-score="13">+13</span> dealhunter · 6:02 pm</div>
+  </div>
+  <div class="mock">
+    <div class="mock-title">Home Depot clearance tools</div>
+    <div class="mock-meta"><span class="chip" data-score="0">0</span> minuterice · 5:41 pm</div>
+  </div>
+  <div class="mock">
+    <div class="mock-title">"Free" shipping on a $200 item</div>
+    <div class="mock-meta"><span class="chip" data-score="-14">-14</span> sceptic · 4:58 pm</div>
+  </div>
+
+  <h2>Values</h2>
+  <table>
+    <thead><tr><th>Score</th><th>Chip</th><th>Background</th><th>Text</th><th>Contrast</th></tr></thead>
+    <tbody id="table"></tbody>
+  </table>
+</main>
+
+<script>
+  // <<<PURE_LOGIC>>>
+  // Score magnitude -> [lightness %, saturation %]. Linear between anchors,
+  // clamped beyond the last one. Chosen so 10, 50 and 100 each land on a
+  // visibly different shade without hard steps.
+  const ANCHORS = [
+    [0, 96, 0],
+    [1, 93, 45],
+    [10, 84, 60],
+    [50, 62, 70],
+    [100, 28, 80],
+  ];
+
+  const DARK_TEXT = [26, 26, 26];
+  const LIGHT_TEXT = [255, 255, 255];
+
+  function ramp(absScore) {
+    const a = Math.max(Math.abs(absScore), 1);
+    for (let i = 0; i < ANCHORS.length - 1; i++) {
+      const [s0, l0, sat0] = ANCHORS[i];
+      const [s1, l1, sat1] = ANCHORS[i + 1];
+      if (a >= s0 && a <= s1) {
+        const t = (a - s0) / (s1 - s0);
+        return [l0 + (l1 - l0) * t, sat0 + (sat1 - sat0) * t];
+      }
+    }
+    const last = ANCHORS[ANCHORS.length - 1];
+    return [last[1], last[2]];
+  }
+
+  function hslToRgb(h, s, l) {
+    const sat = s / 100;
+    const light = l / 100;
+    const c = (1 - Math.abs(2 * light - 1)) * sat;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = light - c / 2;
+    const seg = Math.floor(h / 60) % 6;
+    const rgb = [
+      [c, x, 0],
+      [x, c, 0],
+      [0, c, x],
+      [0, x, c],
+      [x, 0, c],
+      [c, 0, x],
+    ][seg];
+    return rgb.map((v) => Math.round((v + m) * 255));
+  }
+
+  function toHex(rgb) {
+    return '#' + rgb.map((v) => v.toString(16).padStart(2, '0')).join('');
+  }
+
+  function relativeLuminance(rgb) {
+    const channel = (v) => {
+      const n = v / 255;
+      return n <= 0.03928 ? n / 12.92 : Math.pow((n + 0.055) / 1.055, 2.4);
+    };
+    return 0.2126 * channel(rgb[0]) + 0.7152 * channel(rgb[1]) + 0.0722 * channel(rgb[2]);
+  }
+
+  function contrastRatio(a, b) {
+    const la = relativeLuminance(a);
+    const lb = relativeLuminance(b);
+    const hi = Math.max(la, lb);
+    const lo = Math.min(la, lb);
+    return (hi + 0.05) / (lo + 0.05);
+  }
+
+  function textColourFor(background) {
+    return contrastRatio(background, DARK_TEXT) >= contrastRatio(background, LIGHT_TEXT)
+      ? DARK_TEXT
+      : LIGHT_TEXT;
+  }
+
+  // "+13" -> 13, " -4 SCORE" -> -4, "" -> null
+  function parseScore(raw) {
+    if (raw === null || raw === undefined) return null;
+    const match = String(raw).match(/[+-]?\d+/);
+    return match ? parseInt(match[0], 10) : null;
+  }
+
+  // Returns null for a score of 0, meaning "leave the site's own styling".
+  function styleFor(score) {
+    if (score === 0) return null;
+    const [lightness, saturation] = ramp(score);
+    const background = hslToRgb(score > 0 ? 145 : 0, saturation, lightness);
+    return { background: toHex(background), color: toHex(textColourFor(background)) };
+  }
+  // <<<END_PURE_LOGIC>>>
+
+  const NEUTRAL = { background: '#eaeaea', color: '#444444' };
+
+  function styleOf(score) {
+    return styleFor(score) || NEUTRAL;
+  }
+
+  function paint(el, score) {
+    const { background, color } = styleOf(score);
+    el.style.backgroundColor = background;
+    el.style.color = color;
+    el.textContent = score > 0 ? `+${score}` : String(score);
+  }
+
+  function chip(score) {
+    const el = document.createElement('span');
+    el.className = 'chip';
+    paint(el, score);
+    return el;
+  }
+
+  // Real values from ~/Downloads/rfd.html, ascending.
+  const SAMPLE = [-116, -14, -9, -6, -4, -3, -1, 0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 25, 26, 28, 43, 46, 50, 105, 116];
+  const sample = document.getElementById('sample');
+  SAMPLE.forEach((score) => sample.appendChild(chip(score)));
+
+  function drawBar(barEl, ticksEl, sign) {
+    const stops = [];
+    for (let a = 0; a <= 120; a++) {
+      stops.push(`${styleOf(sign * a).background} ${((a / 120) * 100).toFixed(2)}%`);
+    }
+    barEl.style.background = `linear-gradient(to right, ${stops.join(', ')})`;
+    [0, 1, 10, 25, 50, 75, 100, 120].forEach((a) => {
+      const span = document.createElement('span');
+      span.textContent = sign > 0 ? `+${a}` : `-${a}`;
+      span.style.left = `${(a / 120) * 100}%`;
+      ticksEl.appendChild(span);
+    });
+  }
+  drawBar(document.getElementById('bar-positive'), document.getElementById('ticks-positive'), 1);
+  drawBar(document.getElementById('bar-negative'), document.getElementById('ticks-negative'), -1);
+
+  document.querySelectorAll('.mock .chip').forEach((el) => {
+    paint(el, Number(el.dataset.score));
+  });
+
+  const rows = [-116, -100, -75, -57, -50, -25, -10, -5, -1, 0, 1, 5, 10, 25, 50, 75, 96, 100, 150];
+  const table = document.getElementById('table');
+  rows.forEach((score) => {
+    const { background, color } = styleOf(score);
+    const bg = [1, 3, 5].map((i) => parseInt(background.slice(i, i + 2), 16));
+    const fg = [1, 3, 5].map((i) => parseInt(color.slice(i, i + 2), 16));
+    const ratio = contrastRatio(bg, fg).toFixed(2);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="num">${score > 0 ? `+${score}` : score}</td>
+      <td><span class="chip" style="background:${background};color:${color}">${score > 0 ? `+${score}` : score}</span></td>
+      <td class="num">${background}</td>
+      <td class="num">${color}</td>
+      <td class="num">${ratio}:1</td>`;
+    table.appendChild(tr);
+  });
+
+  document.getElementById('dark').addEventListener('change', (event) => {
+    document.body.classList.toggle('dark', event.target.checked);
+  });
+</script>
+</body>
+</html>
