@@ -9,6 +9,8 @@
 // @description Tints post vote scores on RedFlagDeals forum listings. Green for positive, red for negative, darker as the score grows.
 // @run-at      document-idle
 // @noframes
+// @downloadURL https://raw.githubusercontent.com/wlonkly/userscripts/main/rfd-vote-colours/rfd-vote-colours.user.js
+// @updateURL   https://raw.githubusercontent.com/wlonkly/userscripts/main/rfd-vote-colours/rfd-vote-colours.user.js
 // ==/UserScript==
 
 (function () {
