@@ -8,6 +8,8 @@
 // @license     MIT
 // @author      https://github.com/wlonkly/
 // @description Restores the subscriber count on Reddit subreddits.
+// @downloadURL https://raw.githubusercontent.com/wlonkly/userscripts/main/restore-reddit-subscriber-count/restore-reddit-subscriber-count.user.js
+// @updateURL   https://raw.githubusercontent.com/wlonkly/userscripts/main/restore-reddit-subscriber-count/restore-reddit-subscriber-count.user.js
 // ==/UserScript==
  
  
