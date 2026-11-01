@@ -1,4 +1,4 @@
-# RFD Vote Score Colours
+# RedFlagDeals Vote Score Colours
 
 A userscript that tints the vote score on RedFlagDeals forum listing pages. Positive scores go green, negative scores go red, and the colour deepens as the score grows. Text flips between near-black and white so it stays readable.
 
